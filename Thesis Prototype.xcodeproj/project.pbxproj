@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D83CC910156341A5005DF678 /* fitts_law.xcworkspace in Resources */ = {isa = PBXBuildFile; fileRef = D83CC905156341A5005DF678 /* fitts_law.xcworkspace */; };
 		D87B68DA1465AC510080C57B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D87B68D91465AC500080C57B /* Foundation.framework */; };
 		D87B68DC1465AC510080C57B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D87B68DB1465AC510080C57B /* UIKit.framework */; };
 		D87B68DE1465AC510080C57B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D87B68DD1465AC510080C57B /* CoreGraphics.framework */; };
@@ -37,6 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D83CC905156341A5005DF678 /* fitts_law.xcworkspace */ = {isa = PBXFileReference; lastKnownFileType = wrapper.workspace; path = fitts_law.xcworkspace; sourceTree = "<group>"; };
 		D87B68D51465AC500080C57B /* Thesis Prototype.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Thesis Prototype.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D87B68D91465AC500080C57B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D87B68DB1465AC510080C57B /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -106,6 +108,7 @@
 		D87B68C71465AC500080C57B = {
 			isa = PBXGroup;
 			children = (
+				D83CC905156341A5005DF678 /* fitts_law.xcworkspace */,
 				D87B69221465AEB80080C57B /* www */,
 				D87B68F31465AC510080C57B /* Thesis Prototype */,
 				D87B68D81465AC500080C57B /* Frameworks */,
@@ -294,6 +297,7 @@
 				D87B69141465AC510080C57B /* Capture.bundle in Resources */,
 				D87B69161465AC510080C57B /* PhoneGap.plist in Resources */,
 				D87B69231465AEB80080C57B /* www in Resources */,
+				D83CC910156341A5005DF678 /* fitts_law.xcworkspace in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
