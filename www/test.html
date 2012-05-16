@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title></title>
+  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+	<meta charset="utf-8">
+
+
+	<!-- iPad/iPhone specific css below, add after your main css >
+	<link rel="stylesheet" media="only screen and (max-device-width: 1024px)" href="ipad.css" type="text/css" />		
+	<link rel="stylesheet" media="only screen and (max-device-width: 480px)" href="iphone.css" type="text/css" />		
+	-->
+	<!-- If your application is targeting iOS BEFORE 4.0 you MUST put json2.js from http://www.JSON.org/json2.js into your www directory and include it here -->
+	<style>
+        /*.target{
+            display:block;
+            position:absolute;
+            border:solid 1px green;
+        }
+        
+        #origin{
+            display:block;
+            position:absolute;
+            border:solid 1px red;
+            background-color:red;
+        }*/
+        
+        .active{
+            background-color:green;
+        }
+        
+        .huge{
+            height:128px;
+        }
+        
+        .big{
+            height:64px;
+        }
+        
+        .medium{
+            height:32px;
+        }
+        
+        .small{
+            height:16px;
+        }
+        
+        #box_1{
+            display:block;
+            float:left;
+            position:absolute;
+            border:solid 1px green;
+            top:456px;
+            width:60%;
+            margin:0 20%;
+        }
+        #box_2{
+            display:block;
+            float:left;
+            position:absolute;
+            top:568px;
+            width:60%;
+            margin:0 20%;
+            border:solid 1px green;
+        }
+        
+    </style>
+    <script type="text/javascript" charset="utf-8" src="jquery.js"></script>
+    <script type="text/javascript" charset="utf-8" src="phonegap-1.1.0.js"></script>
+    <script type="text/javascript">
+        var count = 0;
+        var block = 1;
+        var set = 1;
+        var targetHeight = 16;
+        var amp = 64;
+        var originTime;
+        var targetTime;
+        var boxPosition_1
+        var boxPosition_2
+        var participant = window.localStorage.getItem("participant");
+        var db = window.openDatabase("fittsLaw", "1.0", "Fitts Law", 1000000);
+	
+  function targetHighlight(boxCount){
+      $('#box_1').css('background-color', 'white');
+      $('#box_2').css('background-color', 'green');
+      $('#box_1').off("click");
+      $('#box_2').click(function(){
+          count++;
+          amplitude(amp);
+          targetTime = Date.now();
+          targetReset(boxCount);
+          recordTime();
+          playFeedback();
+      });
+  }
+  
+  function targetReset(boxCount){
+      $('#box_2').css('background-color', 'white');
+      $('#box_1').css('background-color', 'green');
+      $('#box_2').off("click");
+      $('#box_1').on("click", originClick());
+      if(count >= 2){
+          newSize();
+          count = 0;
+          amp = 64;
+          if (targetHeight > 64){
+              targetHeight = 16;
+              $('#box_1').offset({top: 456 - targetHeight});
+              $('#box_2').offset({top: 568 + targetHeight});
+              $('#box_1').height(targetHeight);
+              $('#box_2').height(targetHeight);
+              set++;
+              if(set == 4){
+                  if(block < 10){
+                    block++;
+                    set = 1;
+                  }else{
+                      alert("Test is over. Thank you!");
+                  }
+              };
+          };
+      };
+  }
+
+    function amplitude(a){
+        boxPosition_1 = $('#box_1').offset().top;
+        boxPosition_2 = $('#box_2').offset().top;
+        
+        $('#box_1').offset({top: boxPosition_1 - amp});
+        $('#box_2').offset({top: boxPosition_2 + amp});
+    }
+        
+    function newSize(){
+        $('#box_1').offset({top: 456 - targetHeight});
+        $('#box_2').offset({top: 568 + targetHeight});
+        
+        targetHeight = targetHeight * 2;
+        $('#box_1').height(targetHeight);
+        $('#box_2').height(targetHeight);
+    }
+        
+// NEED TO PUT IN NEAR MISSES, ERRORS
+        
+  function originClick(){
+    $('#box_1').click(function(){
+      originTime = Date.now();
+      targetHighlight(count);
+    });
+  }
+    
+    function playFeedback() {
+        switch (set){
+            case 1:
+                navigator.notification.vibrate(2000);
+                break;
+            case 2:
+                navigator.notification.beep(1);
+                break;
+            case 3:
+                navigator.notification.beep(1);
+                navigator.notification.vibrate(2000);
+                break;
+        }
+    }
+        
+    function recordTime(){
+        cleanTime = targetTime - originTime;
+        function addDbData(tx) {
+            tx.executeSql('INSERT INTO PARTICIPANT'+participant+' (block, reaction, height, amp, testnum) VALUES ('+block+', '+cleanTime+', '+targetHeight+', '+(boxPosition_2 - boxPosition_1)+', '+set+')');
+        }
+        db.transaction(addDbData, errorCB, successInsertCB);
+    }
+    
+    function createDB(tx) {
+        tx.executeSql('DROP TABLE IF EXISTS PARTICIPANT'+participant);
+        tx.executeSql('CREATE TABLE IF NOT EXISTS PARTICIPANT'+participant+' (id unique, block, reaction, height, amp, testnum)');
+    }
+        
+    function errorCB(err) {
+        alert("Error processing SQL: "+err);
+    }
+    
+    function successCreateCB() {
+        alert("You may start the test. Please press the red button, and then the highlighted green button.");
+    }
+        
+    function successInsertCB() {
+        alert("block: "+block+", time: "+cleanTime+", height: "+targetHeight+", amp:"+(boxPosition_2 - boxPosition_1)+", set:"+set+", user:"+participant);
+    }
+        
+    function onDeviceReady(){
+        // do your thing!
+        //navigator.notification.alert("PhoneGap is working")
+        db.transaction(createDB, errorCB, successCreateCB);
+        navigator.notification.beep(1);
+    }
+      
+    function onBodyLoad(){
+        
+        //alert("time: "+cleanTime+", box: "+count+", set:"+set+", user:"+participant);
+        document.addEventListener("deviceready", onDeviceReady, false);
+    }
+    
+    $(document).ready(function(){
+        originClick();
+    });
+        
+    </script>
+  </head>
+  <body onload="onBodyLoad()">
+      <a href="#" id="box_1" class="active small"></a>
+      <a href="#" id="box_2" class="small"></a>
+  </body>
+</html>
